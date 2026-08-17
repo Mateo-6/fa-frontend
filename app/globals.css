@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-geist-sans: "Inter", system-ui, sans-serif;
+
+  /* Light mode: clean slate desk with solid white cards */
+  --ground-deep: #f1f5f9;
+  --ground: #ffffff;
+  --ground-raised: #e2e8f0;
+
+  --glass: rgba(255, 255, 255, 0.95);
+  --glass-hover: rgba(241, 245, 249, 0.95);
+  --glass-border: rgba(0, 0, 0, 0.08);
+
+  --ink: #0f172a;
+  --ink-muted: #475569;
+  --ink-subtle: #64748b;
+
+  --accent: #0ea5e9;
+  --accent-glow: rgba(14, 165, 233, 0.25);
+  --accent-foreground: #ffffff;
+
+  --danger: #dc2626;
+  --danger-glow: rgba(220, 38, 38, 0.20);
+
+  --income: #059669;
+  --income-muted: #10b981;
+  --expense: #dc2626;
+  --expense-muted: #ef4444;
+  --credit: #4f46e5;
+  --credit-muted: #6366f1;
+}
+
+.dark {
+  /* Dark mode: deep slate ledger */
+  --ground-deep: #0b1021;
+  --ground: #111827;
+  --ground-raised: #1a2235;
+
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-hover: rgba(255, 255, 255, 0.10);
+  --glass-border: rgba(255, 255, 255, 0.10);
+
+  --ink: #f8fafc;
+  --ink-muted: #94a3b8;
+  --ink-subtle: #64748b;
+
+  --accent: #38bdf8;
+  --accent-glow: rgba(56, 189, 248, 0.35);
+  --accent-foreground: #0b1021;
+
+  --danger: #f87171;
+  --danger-glow: rgba(248, 113, 113, 0.30);
+
+  --income: #34d399;
+  --income-muted: #10b981;
+  --expense: #f87171;
+  --expense-muted: #ef4444;
+  --credit: #818cf8;
+  --credit-muted: #6366f1;
+}
+
+/* Direction contract: Glass Ledger
+   THESIS: Trust through precision — a frosted glass card over a calm ground.
+   OWN-WORLD: Frosted glass panels, cool calm accent, geometric sans.
+*/
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--ground-deep);
+    color: var(--ink);
+  }
+
+  ::selection {
+    background: var(--accent-glow);
+    color: var(--ink);
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--ink);
+    -webkit-box-shadow: 0 0 0px 1000px var(--ground) inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-glass border border-glass-border shadow-glass backdrop-blur-xl;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-toast-in {
+  animation: toast-in 0.22s ease-out both;
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-dialog-in {
+  animation: dialog-in 0.2s ease-out both;
+}

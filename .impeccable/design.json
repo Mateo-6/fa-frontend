@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-15T18:10:00.000Z",
+  "title": "Design System: Financial App",
+  "extensions": {
+    "colorMeta": {
+      "ground-deep": { "role": "neutral", "displayName": "Ground Deep", "canonical": "#0b1021", "tonalRamp": ["#02040a", "#0b1021", "#111827", "#1a2235", "#2a3650", "#475569", "#94a3b8", "#f8fafc"] },
+      "ground": { "role": "neutral", "displayName": "Ground", "canonical": "#111827", "tonalRamp": ["#02040a", "#0b1021", "#111827", "#1a2235", "#2a3650", "#475569", "#94a3b8", "#f8fafc"] },
+      "ground-raised": { "role": "neutral", "displayName": "Ground Raised", "canonical": "#1a2235", "tonalRamp": ["#02040a", "#0b1021", "#111827", "#1a2235", "#2a3650", "#475569", "#94a3b8", "#f8fafc"] },
+      "glass": { "role": "surface", "displayName": "Glass", "canonical": "rgba(255, 255, 255, 0.06)", "tonalRamp": ["rgba(255,255,255,0.02)", "rgba(255,255,255,0.04)", "rgba(255,255,255,0.06)", "rgba(255,255,255,0.08)", "rgba(255,255,255,0.10)", "rgba(255,255,255,0.14)", "rgba(255,255,255,0.20)", "rgba(255,255,255,0.30)"] },
+      "ink": { "role": "text", "displayName": "Ink", "canonical": "#f8fafc", "tonalRamp": ["#02040a", "#0b1021", "#111827", "#1a2235", "#475569", "#94a3b8", "#cbd5e1", "#f8fafc"] },
+      "ink-muted": { "role": "text-secondary", "displayName": "Ink Muted", "canonical": "#94a3b8", "tonalRamp": ["#02040a", "#0b1021", "#111827", "#334155", "#64748b", "#94a3b8", "#cbd5e1", "#f8fafc"] },
+      "accent": { "role": "primary", "displayName": "Sky Accent", "canonical": "#38bdf8", "tonalRamp": ["#082f49", "#0c4a6e", "#075985", "#0369a1", "#0ea5e9", "#38bdf8", "#7dd3fc", "#bae6fd"] },
+      "danger": { "role": "danger", "displayName": "Danger", "canonical": "#f87171", "tonalRamp": ["#450a0a", "#7f1d1d", "#991b1b", "#b91c1c", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Product wordmark and major page titles." },
+      "headline": { "displayName": "Headline", "purpose": "Card titles and section headers." },
+      "body": { "displayName": "Body", "purpose": "Form labels, descriptions, and supporting copy." },
+      "label": { "displayName": "Label", "purpose": "Field labels and microcopy." }
+    },
+    "shadows": [
+      { "name": "glass", "value": "0 8px 32px rgba(0, 0, 0, 0.35)", "purpose": "Default elevation for cards and panels." },
+      { "name": "glass-lg", "value": "0 24px 64px rgba(0, 0, 0, 0.45)", "purpose": "Modals and elevated sheets." },
+      { "name": "accent-glow", "value": "0 0 0 3px rgba(56, 189, 248, 0.25), 0 0 24px rgba(56, 189, 248, 0.20)", "purpose": "Focus ring and active-state halo." },
+      { "name": "danger-glow", "value": "0 0 0 3px rgba(248, 113, 113, 0.20), 0 0 20px rgba(248, 113, 113, 0.15)", "purpose": "Focus ring for invalid fields." }
+    ],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Entrance animations and state transitions." },
+      { "name": "duration-fast", "value": "200ms", "purpose": "Hover and focus state transitions." },
+      { "name": "duration-medium", "value": "550ms", "purpose": "Field entrance animations." },
+      { "name": "duration-slow", "value": "700ms", "purpose": "Card entrance animations." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main call-to-action; used for submitting forms and primary tasks.",
+      "html": "<button class=\"ds-btn-primary\">Iniciar sesión</button>",
+      "css": ".ds-btn-primary { background: #38bdf8; color: #0b1021; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 0.875rem; border: none; cursor: pointer; transition: background 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, transform 0.15s ease; } .ds-btn-primary:hover { background: #7dd3fc; box-shadow: 0 0 24px 4px rgba(56, 189, 248, 0.15); } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #0b1021, 0 0 0 4px rgba(56, 189, 248, 0.5); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action on dark surfaces; used for logout and low-emphasis actions.",
+      "html": "<button class=\"ds-btn-ghost\">Cancelar</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: #94a3b8; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 0.875rem; border: none; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; } .ds-btn-ghost:hover { background: rgba(255, 255, 255, 0.10); color: #f8fafc; } .ds-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Single-line text field with label, used inside glass cards.",
+      "html": "<div class=\"ds-input-wrap\"><label class=\"ds-input-label\" for=\"email\">Correo electrónico</label><input id=\"email\" class=\"ds-input\" type=\"email\" placeholder=\"tu@email.com\" /></div>",
+      "css": ".ds-input-wrap { display: flex; flex-direction: column; gap: 6px; } .ds-input-label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; color: #94a3b8; transition: color 0.2s ease; } .ds-input-wrap:focus-within .ds-input-label { color: #38bdf8; } .ds-input { width: 100%; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.10); background: rgba(17, 24, 39, 0.60); padding: 12px 16px; font-size: 0.875rem; color: #f8fafc; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; } .ds-input::placeholder { color: #94a3b8; } .ds-input:hover { background: rgba(26, 34, 53, 0.60); } .ds-input:focus { outline: none; border-color: rgba(56, 189, 248, 0.60); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25), 0 0 24px rgba(56, 189, 248, 0.20); } .ds-input[aria-invalid='true'] { border-color: rgba(248, 113, 113, 0.60); box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.20), 0 0 20px rgba(248, 113, 113, 0.15); }"
+    },
+    {
+      "name": "Glass Card",
+      "kind": "card",
+      "refersTo": "card-glass",
+      "description": "Primary container for authentication panels and lifted content.",
+      "html": "<div class=\"ds-glass-card\"><h2 class=\"ds-glass-card-title\">Bienvenido de nuevo</h2><p class=\"ds-glass-card-body\">Ingresa tus credenciales para continuar.</p></div>",
+      "css": ".ds-glass-card { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 16px; padding: 24px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); color: #f8fafc; } .ds-glass-card-title { font-size: 1.125rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; margin: 0 0 4px; } .ds-glass-card-body { font-size: 0.875rem; line-height: 1.5; color: #94a3b8; margin: 0; }"
+    },
+    {
+      "name": "Product Icon",
+      "kind": "custom",
+      "refersTo": "icon-product",
+      "description": "Rounded-square icon container used for the product mark.",
+      "html": "<div class=\"ds-product-icon\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a2 2 0 0 0-2-2\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/></svg></div>",
+      "css": ".ds-product-icon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 16px; background: rgba(56, 189, 248, 0.10); color: #38bdf8; box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.20), 0 0 24px 4px rgba(56, 189, 248, 0.15); } .ds-product-icon svg { width: 24px; height: 24px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Glass Ledger",
+    "overview": "A quiet, deep workspace where personal finance feels precise and protected. The interface reads like a single sheet of frosted glass held above a dark desk: every control is legible, every state is immediate, and nothing competes for attention. Trust is built through restraint, alignment, and measured motion rather than through decorative security cues. The system is intentionally dark because the product is visited in short, focused sessions — often in the evening or between tasks — and a deep ground keeps the numbers and forms forward. Cool accents behave like instrument readouts: one color, used sparingly, marks the active path.",
+    "keyCharacteristics": [
+      "One cool accent against a near-black ground.",
+      "Frosted glass containers with visible but quiet borders.",
+      "Geometric sans type at a single family with weight and size creating hierarchy.",
+      "Motion that enters softly and settles; no bouncing, no scatter.",
+      "States signaled by structure (border, glow, elevation) before color."
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "The sky accent is the only saturated hue on authentication and dense financial surfaces. Use it for ≤10% of the visible area; its scarcity is what makes it feel like a signal.", "section": "colors" },
+      { "name": "The No Cream Rule", "body": "Warm paper or parchment tones are out of bounds. The world is cool, dark, and instrumental.", "section": "colors" },
+      { "name": "The Single Voice Rule", "body": "Inter is the only type family. Display moments may tighten tracking; body copy never does.", "section": "typography" },
+      { "name": "The Measure Rule", "body": "Body paragraphs max out at 65–75ch. Form cards stay narrow (max-width ~380px) so lines never sprawl.", "section": "typography" },
+      { "name": "The Blur Must Be Functional Rule", "body": "Backdrop blur appears only on glass containers that sit above the deep ground. Do not apply blur to flat surfaces or as a decorative texture.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the sky accent scarce; use it for primary actions, focus states, and links.",
+      "Do maintain a single type family (Inter) across all surfaces.",
+      "Do use the glass card pattern for lifted panels on the deep ground.",
+      "Do signal state with border, glow, and elevation before relying on color alone."
+    ],
+    "donts": [
+      "Don't introduce warm paper, cream, or parchment tones.",
+      "Don't use glass blur as a decorative background texture.",
+      "Don't apply hard offset shadows; depth is diffuse, not stamped.",
+      "Don't use emoji or Unicode glyphs as icons; draw icons in a consistent stroke.",
+      "Don't add kickers or eyebrow labels above headings."
+    ]
+  }
+}
