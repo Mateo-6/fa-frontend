@@ -182,7 +182,7 @@ export default function CardDetailPage() {
           <section className="grid gap-6 lg:grid-cols-3">
             {/* Periodo actual */}
             <div className="glass-panel rounded-2xl p-5 lg:col-span-2">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-glass-border pb-3">
                 <div className="flex items-center gap-2">
                   <Receipt className="h-4 w-4 text-accent" />
                   <h2 className="text-base font-semibold text-ink">Periodo actual</h2>
@@ -236,7 +236,7 @@ export default function CardDetailPage() {
 
             {/* Pagos recientes */}
             <div className="glass-panel self-start rounded-2xl p-5">
-              <div className="mb-2 flex items-center gap-2">
+              <div className="mb-2 flex items-center gap-2 border-b border-glass-border pb-3">
                 <ArrowDownUp className="h-4 w-4 text-accent" />
                 <h2 className="text-base font-semibold text-ink">Pagos recientes</h2>
               </div>
@@ -263,7 +263,7 @@ export default function CardDetailPage() {
 
           {/* Estados de cuenta */}
           <section className="glass-panel rounded-2xl p-5">
-            <div className="mb-1 flex items-center justify-between gap-3">
+            <div className="mb-3 flex items-center justify-between gap-3 border-b border-glass-border pb-3">
               <div className="flex items-center gap-2">
                 <CalendarClock className="h-4 w-4 text-accent" />
                 <h2 className="text-base font-semibold text-ink">Estados de cuenta</h2>

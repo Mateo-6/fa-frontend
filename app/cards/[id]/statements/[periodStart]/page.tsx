@@ -157,7 +157,7 @@ export default function CardStatementDetailPage() {
 
           {/* Desglose por categoría */}
           <section className="glass-panel rounded-2xl p-5">
-            <div className="mb-1 flex items-center gap-2">
+            <div className="mb-3 flex items-center gap-2 border-b border-glass-border pb-3">
               <PieChart className="h-4 w-4 text-accent" />
               <h2 className="text-base font-semibold text-ink">Consumo por categoría</h2>
             </div>
@@ -197,7 +197,7 @@ export default function CardStatementDetailPage() {
 
           {/* Transacciones */}
           <section className="glass-panel rounded-2xl p-5">
-            <div className="mb-1 flex items-center gap-2">
+            <div className="mb-3 flex items-center gap-2 border-b border-glass-border pb-3">
               <Receipt className="h-4 w-4 text-accent" />
               <h2 className="text-base font-semibold text-ink">Transacciones del periodo</h2>
             </div>

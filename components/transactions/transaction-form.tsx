@@ -78,15 +78,18 @@ function budgetProgressStyles(percentage: number): { badge: string; bar: string 
   return BUDGET_PROGRESS_STYLES.CUMPLIDO;
 }
 
-function BudgetProgressBar({ budget }: { budget: Budget }) {
-  const percentage = Math.min(100, Math.max(0, budget.percentage));
-  const style = budgetProgressStyles(budget.percentage);
+function BudgetProgressBar({ budget, additional = 0 }: { budget: Budget; additional?: number }) {
+  const spent = budget.spent + additional;
+  const projectedPercentage = budget.amount > 0 ? (spent / budget.amount) * 100 : 0;
+  const barPercentage = Math.min(100, Math.max(0, projectedPercentage));
+  const style = budgetProgressStyles(projectedPercentage);
+  const over = projectedPercentage > 100;
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between gap-3">
         <p className="text-xs text-ink-subtle">
           <span className="font-semibold text-ink">
-            {formatCurrency(budget.spent, budget.currency)}
+            {formatCurrency(spent, budget.currency)}
           </span>{" "}
           de {formatCurrency(budget.amount, budget.currency)}
         </p>
@@ -96,22 +99,92 @@ function BudgetProgressBar({ budget }: { budget: Budget }) {
             style.badge
           )}
         >
-          {Math.round(budget.percentage)}%
+          {Math.round(projectedPercentage)}%
         </span>
       </div>
       <div
         className="h-1.5 w-full overflow-hidden rounded-full bg-glass"
         role="progressbar"
-        aria-valuenow={Math.round(budget.percentage)}
+        aria-valuenow={Math.round(barPercentage)}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={`Progreso de ${budget.name}`}
       >
         <div
           className={cn("h-full rounded-full transition-all duration-500 ease-out", style.bar)}
-          style={{ width: `${percentage}%` }}
+          style={{ width: `${barPercentage}%` }}
         />
       </div>
+      {over && additional > 0 && (
+        <p className="mt-1.5 text-xs font-medium text-danger">
+          Este gasto excede el presupuesto
+        </p>
+      )}
+    </div>
+  );
+}
+
+type SpendingCheckKind = "card" | "balance" | "budget";
+
+interface SpendingCheck {
+  key: string;
+  kind: SpendingCheckKind;
+  title: string;
+  detail: string;
+  used: number;
+  limit: number;
+  currency: string;
+  percentage: number;
+  over: boolean;
+  message: string;
+}
+
+function UsageBar({ check }: { check: SpendingCheck }) {
+  const barWidth = Math.min(100, Math.max(0, check.percentage));
+  const badge = check.over
+    ? "bg-danger/10 text-danger"
+    : check.percentage >= 80
+      ? "bg-accent/10 text-accent"
+      : "bg-income/10 text-income";
+  const barClass = check.over
+    ? "bg-danger"
+    : check.percentage >= 80
+      ? "bg-accent"
+      : "bg-income";
+
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3">
+        <span className="truncate text-xs text-ink-muted">{check.title}</span>
+        <span
+          className={cn(
+            "inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-semibold",
+            badge
+          )}
+        >
+          {Math.round(check.percentage)}%
+        </span>
+      </div>
+      <p className="mt-0.5 text-xs text-ink-subtle">
+        <span className="font-semibold text-ink">
+          {formatCurrency(check.used, check.currency)}
+        </span>{" "}
+        de {formatCurrency(check.limit, check.currency)}
+      </p>
+      <div
+        className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-glass"
+        role="progressbar"
+        aria-valuenow={Math.round(barWidth)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Uso de ${check.title}`}
+      >
+        <div
+          className={cn("h-full rounded-full transition-all duration-500 ease-out", barClass)}
+          style={{ width: `${barWidth}%` }}
+        />
+      </div>
+      {check.over && <p className="mt-1.5 text-xs font-medium text-danger">{check.message}</p>}
     </div>
   );
 }
@@ -247,7 +320,10 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
-    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
+    setErrors((prev) => ({
+      ...prev,
+      [key]: undefined as string | undefined,
+    }));
     if (serverError) setServerError(null);
   };
 
@@ -475,6 +551,100 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
 
   const totalAmount = parseAmount(form.amount);
 
+  const spendingChecks = React.useMemo<SpendingCheck[]>(() => {
+    if (form.type !== "EXPENSE") return [];
+    if (totalAmount === null || totalAmount <= 0) return [];
+    if (form.paymentMethodId === "") return [];
+
+    const checks: SpendingCheck[] = [];
+    const paymentMethod = paymentMethods.find((method) => method.id === form.paymentMethodId);
+    const details = paymentMethod?.details ?? {};
+    const currency = paymentMethod?.currency ?? "USD";
+
+    if (paymentMethod) {
+      if (paymentMethod.type === "CREDIT_CARD") {
+        const limit = details.credit_limit;
+        const debt = details.current_balance;
+        if (typeof limit === "number" && limit > 0 && typeof debt === "number") {
+          const baseDebt = isEdit && transaction ? Math.max(0, debt - transaction.amount) : debt;
+          const used = baseDebt + totalAmount;
+          const available = Math.max(0, limit - baseDebt);
+          checks.push({
+            key: "card",
+            kind: "card",
+            title: `Cupo de ${paymentMethod.name}`,
+            detail: `Deuda actual: ${formatCurrency(baseDebt, currency)} · Disponible: ${formatCurrency(available, currency)}`,
+            used,
+            limit,
+            currency,
+            percentage: (used / limit) * 100,
+            over: used > limit,
+            message: `El gasto supera el cupo disponible de ${paymentMethod.name} (${formatCurrency(available, currency)}).`,
+          });
+        }
+      } else {
+        const balance =
+          paymentMethod.type === "CASH" ? details.amount : details.current_balance;
+        if (typeof balance === "number") {
+          const baseBalance = isEdit && transaction ? balance + transaction.amount : balance;
+          const remaining = baseBalance - totalAmount;
+          const over = remaining < 0;
+          checks.push({
+            key: "balance",
+            kind: "balance",
+            title: `Saldo de ${paymentMethod.name}`,
+            detail: `Disponible: ${formatCurrency(Math.max(0, baseBalance), currency)} · Después del gasto: ${formatCurrency(Math.max(0, remaining), currency)}`,
+            used: totalAmount,
+            limit: baseBalance,
+            currency,
+            percentage: baseBalance > 0 ? (totalAmount / baseBalance) * 100 : 100,
+            over,
+            message: `No tienes suficiente saldo en ${paymentMethod.name} (${formatCurrency(Math.max(0, baseBalance), currency)} disponibles).`,
+          });
+        }
+      }
+    }
+
+    if (selectedBudget && form.budgetId !== "") {
+      const imputed = form.budgetAmount !== "" ? parseAmount(form.budgetAmount) : totalAmount;
+      if (imputed !== null && imputed > 0) {
+        const used = selectedBudget.spent + imputed;
+        const remaining = Math.max(0, selectedBudget.amount - selectedBudget.spent);
+        checks.push({
+          key: "budget",
+          kind: "budget",
+          title: `Presupuesto de ${selectedBudget.name}`,
+          detail: `Usado: ${formatCurrency(selectedBudget.spent, selectedBudget.currency)} · Restante: ${formatCurrency(remaining, selectedBudget.currency)}`,
+          used,
+          limit: selectedBudget.amount,
+          currency: selectedBudget.currency,
+          percentage: (used / selectedBudget.amount) * 100,
+          over: used > selectedBudget.amount,
+          message: `El gasto excede el presupuesto "${selectedBudget.name}" (restante: ${formatCurrency(remaining, selectedBudget.currency)}).`,
+        });
+      }
+    }
+
+    return checks;
+  }, [
+    form.type,
+    form.paymentMethodId,
+    form.budgetId,
+    form.budgetAmount,
+    totalAmount,
+    paymentMethods,
+    selectedBudget,
+    isEdit,
+    transaction,
+  ]);
+
+  const budgetCheckAdditional =
+    selectedBudget && form.budgetId !== ""
+      ? form.budgetAmount !== ""
+        ? (parseAmount(form.budgetAmount) ?? 0)
+        : (totalAmount ?? 0)
+      : 0;
+
   const validate = (): boolean => {
     const next: Record<string, string> = {};
     const amount = parseAmount(form.amount);
@@ -522,8 +692,10 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
       }
     }
 
+    const overChecks = spendingChecks.filter((check) => check.over);
+
     setErrors(next);
-    return Object.keys(next).length === 0;
+    return Object.keys(next).length === 0 && overChecks.length === 0;
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -775,6 +947,74 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
         </p>
       )}
 
+      {form.type === "EXPENSE" && applicableBudgets.length > 0 && (
+        <div className="rounded-lg border border-glass-border p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <PiggyBank className="h-4 w-4 text-accent" />
+            <span className="text-sm font-semibold text-ink">Presupuesto</span>
+          </div>
+          <div className="flex flex-col gap-4">
+            <SelectField
+              label="Aplicar a"
+              value={form.budgetId || "none"}
+              onChange={(e) =>
+                setField("budgetId", e.target.value === "none" ? "" : e.target.value)
+              }
+              disabled={saving}
+            >
+              <option value="none">Sin presupuesto</option>
+              {applicableBudgets.map((budget) => {
+                const isGeneral = budget.categoryId === null;
+                return (
+                  <option key={budget.id} value={budget.id}>
+                    {budget.name} · {PERIOD_LABELS[budget.period]}
+                    {isGeneral ? " · General" : ""}
+                  </option>
+                );
+              })}
+            </SelectField>
+
+            {form.budgetId !== "" && (
+              <div className="flex flex-col gap-3">
+                <SegmentedControl
+                  label="Monto al presupuesto"
+                  options={BUDGET_AMOUNT_OPTIONS}
+                  value={form.budgetAmount === "" ? "total" : "custom"}
+                  onChange={handleBudgetModeChange}
+                  disabled={saving}
+                />
+                {form.budgetAmount !== "" ? (
+                  <MoneyInput
+                    label="Monto personalizado"
+                    placeholder="0,00"
+                    value={form.budgetAmount}
+                    onValueChange={(raw) => setField("budgetAmount", raw)}
+                    error={errors.budgetAmount}
+                    disabled={saving}
+                  />
+                ) : totalAmount !== null ? (
+                  <p className="text-xs text-ink-subtle">
+                    Se imputará el valor total de la compra ({formatCurrency(totalAmount)}).
+                  </p>
+                ) : null}
+                {selectedBudget && (
+                  <BudgetProgressBar
+                    budget={selectedBudget}
+                    additional={budgetCheckAdditional}
+                  />
+                )}
+              </div>
+            )}
+
+            <p className="text-xs text-ink-subtle">
+              {form.budgetId === ""
+                ? "Este gasto no se contará en ningún presupuesto."
+                : "Este gasto se registrará contra el presupuesto seleccionado."}
+            </p>
+          </div>
+        </div>
+      )}
+
       {form.type === "EXPENSE" && (
         <SelectField
           label="Método de pago"
@@ -791,6 +1031,16 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
             </option>
           ))}
         </SelectField>
+      )}
+
+      {form.type === "EXPENSE" && (
+        <div className="flex flex-col gap-3">
+          {spendingChecks
+            .filter((check) => check.kind !== "budget")
+            .map((check) => (
+              <UsageBar key={check.key} check={check} />
+            ))}
+        </div>
       )}
 
       {form.type === "INCOME" && (
@@ -845,76 +1095,17 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
         </div>
       )}
 
-      {form.type === "EXPENSE" && applicableBudgets.length > 0 && (
-        <div className="rounded-lg border border-glass-border p-4">
-          <div className="mb-3 flex items-center gap-2">
-            <PiggyBank className="h-4 w-4 text-accent" />
-            <span className="text-sm font-semibold text-ink">Presupuesto</span>
-          </div>
-          <div className="flex flex-col gap-4">
-            <SelectField
-              label="Aplicar a"
-              value={form.budgetId || "none"}
-              onChange={(e) =>
-                setField("budgetId", e.target.value === "none" ? "" : e.target.value)
-              }
-              disabled={saving}
-            >
-              <option value="none">Sin presupuesto</option>
-              {applicableBudgets.map((budget) => {
-                const isGeneral = budget.categoryId === null;
-                return (
-                  <option key={budget.id} value={budget.id}>
-                    {budget.name} · {PERIOD_LABELS[budget.period]}
-                    {isGeneral ? " · General" : ""}
-                  </option>
-                );
-              })}
-            </SelectField>
-
-            {form.budgetId !== "" && (
-              <div className="flex flex-col gap-3">
-                <SegmentedControl
-                  label="Monto al presupuesto"
-                  options={BUDGET_AMOUNT_OPTIONS}
-                  value={form.budgetAmount === "" ? "total" : "custom"}
-                  onChange={handleBudgetModeChange}
-                  disabled={saving}
-                />
-                {form.budgetAmount !== "" ? (
-                  <MoneyInput
-                    label="Monto personalizado"
-                    placeholder="0,00"
-                    value={form.budgetAmount}
-                    onValueChange={(raw) => setField("budgetAmount", raw)}
-                    error={errors.budgetAmount}
-                    disabled={saving}
-                  />
-                ) : totalAmount !== null ? (
-                  <p className="text-xs text-ink-subtle">
-                    Se imputará el valor total de la compra ({formatCurrency(totalAmount)}).
-                  </p>
-                ) : null}
-                {selectedBudget && <BudgetProgressBar budget={selectedBudget} />}
-              </div>
-            )}
-
-            <p className="text-xs text-ink-subtle">
-              {form.budgetId === ""
-                ? "Este gasto no se contará en ningún presupuesto."
-                : "Este gasto se registrará contra el presupuesto seleccionado."}
-            </p>
-          </div>
-        </div>
-      )}
-
       <div className="mt-2 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         {onCancel && (
           <Button type="button" variant="ghost" onClick={onCancel} disabled={saving}>
             Cancelar
           </Button>
         )}
-        <Button type="submit" isLoading={saving} disabled={saving}>
+        <Button
+          type="submit"
+          isLoading={saving}
+          disabled={saving || spendingChecks.some((check) => check.over)}
+        >
           {isEdit ? <Save className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {submitLabel ?? (isEdit ? "Guardar cambios" : "Crear transacción")}
         </Button>

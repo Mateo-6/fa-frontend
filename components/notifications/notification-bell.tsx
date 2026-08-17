@@ -7,6 +7,7 @@ import {
   getNotifications,
   getUnreadNotificationCount,
   markNotificationAsRead,
+  subscribeNotificationsStream,
   type Notification,
 } from "@/lib/api";
 import { formatCompactDate } from "@/lib/format";
@@ -32,6 +33,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
   const [mounted, setMounted] = React.useState(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const panelRef = React.useRef<HTMLDivElement>(null);
+  const openRef = React.useRef(false);
 
   const refreshCount = React.useCallback(async () => {
     try {
@@ -54,6 +56,10 @@ export function NotificationBell({ className }: NotificationBellProps) {
     };
   }, [refreshCount]);
 
+  React.useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
   const loadNotifications = React.useCallback(async () => {
     setLoading(true);
     try {
@@ -65,6 +71,14 @@ export function NotificationBell({ className }: NotificationBellProps) {
       setLoading(false);
     }
   }, []);
+
+  React.useEffect(() => {
+    const unsubscribe = subscribeNotificationsStream(() => {
+      refreshCount();
+      if (openRef.current) loadNotifications();
+    });
+    return unsubscribe;
+  }, [loadNotifications, refreshCount]);
 
   React.useEffect(() => {
     if (!open) return;

@@ -6,12 +6,13 @@ import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { Button } from "@/components/ui/button";
 import { FormModal } from "@/components/ui/form-modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { MobileFab } from "@/components/ui/mobile-fab";
 import { CategoryForm } from "@/components/categories/category-form";
 import { CategoryRow } from "@/components/categories/category-row";
 import { useToast } from "@/components/ui/toast";
 import { getCategories, deleteCategory, Category, CategoryType } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { AlertCircle, ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Plus, Tag } from "lucide-react";
+import { AlertCircle, ArrowDownLeft, ArrowLeftRight, ArrowUpRight, ChevronDown, Plus, Tag } from "lucide-react";
 
 interface GroupConfig {
   type: CategoryType;
@@ -70,6 +71,7 @@ export default function CategoriesPage() {
   const [editing, setEditing] = React.useState<Category | null>(null);
   const [deleting, setDeleting] = React.useState<Category | null>(null);
   const [deletingLoading, setDeletingLoading] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState<Record<string, boolean>>({});
 
   React.useEffect(() => {
     const token = localStorage.getItem("fa_token") || sessionStorage.getItem("fa_token");
@@ -175,7 +177,7 @@ export default function CategoriesPage() {
                 Organiza tus gastos e ingresos a tu manera.
               </p>
             </div>
-            <Button onClick={() => openCreate()}>
+            <Button onClick={() => openCreate()} className="hidden lg:inline-flex">
               <Plus className="h-4 w-4" />
               <span>Nueva categoría</span>
             </Button>
@@ -226,8 +228,16 @@ export default function CategoriesPage() {
             <div className="space-y-6">
               {groups.map((group) => (
                 <section key={group.type} className="glass-panel rounded-2xl p-5">
-                  <div className="mb-1 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between gap-3 border-b border-glass-border pb-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCollapsed((prev) => ({ ...prev, [group.type]: !prev[group.type] }))
+                      }
+                      className="group flex min-w-0 flex-1 items-center gap-3 text-left"
+                      aria-expanded={!collapsed[group.type]}
+                      aria-controls={`categories-${group.type}`}
+                    >
                       <div
                         className={cn(
                           "flex h-9 w-9 items-center justify-center rounded-xl",
@@ -236,34 +246,44 @@ export default function CategoriesPage() {
                       >
                         <group.icon className="h-4 w-4" />
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <h2 className="text-base font-semibold text-ink">{group.label}</h2>
                         <p className="text-xs text-ink-muted">{group.description}</p>
                       </div>
-                    </div>
-                    <span className="rounded-full bg-glass px-2.5 py-0.5 text-xs font-medium text-ink-muted">
-                      {group.items.length}
-                    </span>
+                      <span className="rounded-full bg-glass px-2.5 py-0.5 text-xs font-medium text-ink-muted">
+                        {group.items.length}
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "ml-auto h-4 w-4 shrink-0 text-ink-muted transition-transform",
+                          collapsed[group.type] && "-rotate-90"
+                        )}
+                      />
+                    </button>
                   </div>
 
-                  {group.items.length === 0 ? (
-                    <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-ground/40 px-4 py-3">
-                      <p className="text-sm text-ink-muted">{group.empty}</p>
-                      <Button variant="ghost" onClick={() => openCreate(group.type)}>
-                        <Plus className="h-4 w-4" />
-                        <span>{group.emptyAction}</span>
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="mt-2">
-                      {group.items.map((category) => (
-                        <CategoryRow
-                          key={category.id}
-                          category={category}
-                          onEdit={setEditing}
-                          onDelete={setDeleting}
-                        />
-                      ))}
+                  {!collapsed[group.type] && (
+                    <div id={`categories-${group.type}`}>
+                      {group.items.length === 0 ? (
+                      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-ground/40 px-4 py-3">
+                        <p className="text-sm text-ink-muted">{group.empty}</p>
+                        <Button variant="ghost" onClick={() => openCreate(group.type)}>
+                          <Plus className="h-4 w-4" />
+                          <span>{group.emptyAction}</span>
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="mt-2">
+                        {group.items.map((category) => (
+                          <CategoryRow
+                            key={category.id}
+                            category={category}
+                            onEdit={setEditing}
+                            onDelete={setDeleting}
+                          />
+                        ))}
+                      </div>
+                    )}
                     </div>
                   )}
                 </section>
@@ -316,6 +336,11 @@ export default function CategoriesPage() {
         confirmLabel="Eliminar"
         isLoading={deletingLoading}
       />
+
+      {/* Mobile FAB */}
+      <MobileFab label="Nueva categoría" onClick={() => openCreate()}>
+        <Plus className="h-6 w-6" />
+      </MobileFab>
     </DashboardShell>
   );
 }

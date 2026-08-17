@@ -45,6 +45,9 @@ export function CardPaymentForm({ card, onSuccess, onCancel }: CardPaymentFormPr
         if (!active) return;
         const bankAccounts = methods.filter((method) => method.type === "BANK_ACCOUNT");
         setAccounts(bankAccounts);
+        if (bankAccounts.length === 1) {
+          setSourceAccountId(bankAccounts[0].id);
+        }
       })
       .catch((err: unknown) => {
         if (!active) return;

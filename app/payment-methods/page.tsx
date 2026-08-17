@@ -6,6 +6,7 @@ import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { Button } from "@/components/ui/button";
 import { FormModal } from "@/components/ui/form-modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { MobileFab } from "@/components/ui/mobile-fab";
 import { PaymentMethodForm } from "@/components/payment-methods/payment-method-form";
 import { PaymentMethodRow } from "@/components/payment-methods/payment-method-row";
 import { useToast } from "@/components/ui/toast";
@@ -267,7 +268,7 @@ export default function PaymentMethodsPage() {
                 Tarjetas, cuentas y efectivo para registrar tus movimientos.
               </p>
             </div>
-            <Button onClick={() => setCreating(true)}>
+            <Button onClick={() => setCreating(true)} className="hidden lg:inline-flex">
               <Plus className="h-4 w-4" />
               <span>Nuevo método</span>
             </Button>
@@ -358,7 +359,7 @@ export default function PaymentMethodsPage() {
             <div className="space-y-6">
               {grouped.map((group) => (
                 <section key={group.type} className="glass-panel rounded-2xl p-5">
-                  <div className="mb-1 flex items-center justify-between gap-3">
+                  <div className="flex items-center justify-between gap-3 border-b border-glass-border pb-2">
                     <div className="flex items-center gap-3">
                       <div
                         className={cn(
@@ -440,6 +441,11 @@ export default function PaymentMethodsPage() {
         confirmLabel="Eliminar"
         isLoading={deletingLoading}
       />
+
+      {/* Mobile FAB */}
+      <MobileFab label="Nuevo método de pago" onClick={() => setCreating(true)}>
+        <Plus className="h-6 w-6" />
+      </MobileFab>
     </DashboardShell>
   );
 }

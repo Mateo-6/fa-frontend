@@ -26,10 +26,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
-      {/* impeccable-live-start */}
-<script src="http://localhost:8400/live.js?token=3cf18b1d-19e5-4dfe-966f-1b8b6e7637f4"></script>
-{/* impeccable-live-end */}
-</body>
+      </body>
     </html>
   );
 }

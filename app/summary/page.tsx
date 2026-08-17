@@ -11,7 +11,6 @@ import { CreditCardMini } from "@/components/dashboard/credit-card-mini";
 import { getSummary, SummaryData } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
-  Loader2,
   Wallet,
   TrendingUp,
   TrendingDown,
@@ -52,10 +51,79 @@ export default function SummaryPage() {
   if (loading) {
     return (
       <DashboardShell>
-        <main className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col items-center gap-3 text-ink-muted">
-            <Loader2 className="h-8 w-8 animate-spin text-accent" />
-            <p className="text-sm">Cargando tu resumen financiero...</p>
+        <main className="flex-1 px-6 py-8">
+          <div className="mx-auto max-w-6xl space-y-8" aria-hidden="true">
+            {/* Page title */}
+            <div>
+              <div className="h-7 w-56 animate-pulse rounded-md bg-glass" />
+              <div className="mt-2 h-4 w-72 animate-pulse rounded-md bg-glass" />
+            </div>
+
+            {/* Summary cards */}
+            <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="glass-panel rounded-2xl p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 space-y-3">
+                      <div className="h-3 w-20 animate-pulse rounded-md bg-glass" />
+                      <div className="h-7 w-28 animate-pulse rounded-md bg-glass" />
+                    </div>
+                    <div className="h-8 w-8 animate-pulse rounded-lg bg-glass" />
+                  </div>
+                </div>
+              ))}
+            </section>
+
+            {/* Main grid */}
+            <section className="grid gap-6 lg:grid-cols-3">
+              {/* Recent transactions */}
+              <div className="glass-panel rounded-2xl p-5 lg:col-span-2">
+                <div className="mb-4 border-b border-glass-border pb-3">
+                  <div className="h-5 w-52 animate-pulse rounded-md bg-glass" />
+                </div>
+                <div className="space-y-2">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 border-b border-glass-border py-3 last:border-0"
+                    >
+                      <div className="h-9 w-9 animate-pulse rounded-xl bg-glass" />
+                      <div className="h-4 w-32 animate-pulse rounded-md bg-glass" />
+                      <div className="ml-auto h-4 w-20 animate-pulse rounded-md bg-glass" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sidebar */}
+              <div className="space-y-6">
+                <div className="glass-panel rounded-2xl p-5">
+                  <div className="mb-4 border-b border-glass-border pb-3">
+                    <div className="h-5 w-36 animate-pulse rounded-md bg-glass" />
+                  </div>
+                  <div className="space-y-2">
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <div key={index} className="flex items-center gap-3 py-2">
+                        <div className="h-9 w-9 animate-pulse rounded-xl bg-glass" />
+                        <div className="h-4 w-28 animate-pulse rounded-md bg-glass" />
+                        <div className="ml-auto h-4 w-16 animate-pulse rounded-md bg-glass" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="glass-panel rounded-2xl p-5">
+                  <div className="mb-4 border-b border-glass-border pb-3">
+                    <div className="h-5 w-40 animate-pulse rounded-md bg-glass" />
+                  </div>
+                  <div className="space-y-4">
+                    {Array.from({ length: 2 }).map((_, index) => (
+                      <div key={index} className="h-24 animate-pulse rounded-xl bg-glass" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </main>
       </DashboardShell>
@@ -128,7 +196,7 @@ export default function SummaryPage() {
           <section className="grid gap-6 lg:grid-cols-3">
             {/* Recent transactions */}
             <div className="glass-panel rounded-2xl p-5 lg:col-span-2">
-              <div className="mb-4 flex items-center justify-between">
+              <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
                 <div className="flex items-center gap-2">
                   <Receipt className="h-4 w-4 text-accent" />
                   <h2 className="text-base font-semibold text-ink">Transacciones recientes</h2>
@@ -164,7 +232,7 @@ export default function SummaryPage() {
             <div className="space-y-6">
               {/* Upcoming payments */}
               <div className="glass-panel rounded-2xl p-5">
-                <div className="mb-4 flex items-center gap-2">
+                <div className="mb-4 flex items-center gap-2 border-b border-glass-border pb-3">
                   <CalendarClock className="h-4 w-4 text-accent" />
                   <h2 className="text-base font-semibold text-ink">Próximos pagos</h2>
                 </div>
@@ -184,7 +252,7 @@ export default function SummaryPage() {
 
               {/* Credit cards */}
               <div className="glass-panel rounded-2xl p-5">
-                <div className="mb-4 flex items-center justify-between">
+                <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
                   <div className="flex items-center gap-2">
                     <CreditCard className="h-4 w-4 text-accent" />
                     <h2 className="text-base font-semibold text-ink">Tarjetas de crédito</h2>

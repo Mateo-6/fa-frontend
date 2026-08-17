@@ -177,6 +177,10 @@ export function BudgetForm({ budget, categories = [], onSuccess, onCancel, submi
         const payload: UpdateBudgetPayload = {
           name: form.name.trim(),
           amount,
+          currency: form.currency,
+          period: form.period,
+          categoryId: form.categoryId || null,
+          startDate: form.startDate,
           rollover: form.rollover,
           alertThresholds,
         };
@@ -240,7 +244,7 @@ export function BudgetForm({ budget, categories = [], onSuccess, onCancel, submi
           onChange={(e) => setField("currency", e.target.value)}
           options={CURRENCY_OPTIONS}
           error={errors.currency}
-          disabled={saving || isEdit}
+          disabled={saving}
         >
           {CURRENCY_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -256,7 +260,7 @@ export function BudgetForm({ budget, categories = [], onSuccess, onCancel, submi
           value={form.period}
           onChange={(e) => setField("period", e.target.value as BudgetPeriod)}
           options={PERIOD_OPTIONS}
-          disabled={saving || isEdit}
+          disabled={saving}
         >
           {PERIOD_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -270,7 +274,7 @@ export function BudgetForm({ budget, categories = [], onSuccess, onCancel, submi
           onChange={(e) => setField("categoryId", e.target.value)}
           options={categoryOptions}
           placeholder="Selecciona una categoría"
-          disabled={saving || isEdit}
+          disabled={saving}
         >
           {categoryOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -285,14 +289,8 @@ export function BudgetForm({ budget, categories = [], onSuccess, onCancel, submi
         value={form.startDate}
         onChange={(value) => setField("startDate", value)}
         error={errors.startDate}
-        disabled={saving || isEdit}
+        disabled={saving}
       />
-
-      {isEdit && (
-        <p className="-mt-2 text-xs text-ink-subtle">
-          Período, categoría y moneda no se pueden cambiar después de crear el presupuesto.
-        </p>
-      )}
 
       <div className="flex flex-col gap-1.5">
         <span className="text-xs font-medium tracking-wide text-ink-muted">Umbrales de alerta (%)</span>

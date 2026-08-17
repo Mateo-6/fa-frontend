@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { SegmentedControl, SegmentOption } from "@/components/ui/segmented-control";
 import { FormModal } from "@/components/ui/form-modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { MobileFab } from "@/components/ui/mobile-fab";
 import { BudgetForm } from "@/components/budgets/budget-form";
 import { BudgetCard } from "@/components/budgets/budget-card";
 import { useToast } from "@/components/ui/toast";
@@ -168,7 +169,7 @@ export default function BudgetsPage() {
                 value={view}
                 onChange={(value) => setView(value as "active" | "history")}
               />
-              <Button onClick={() => setCreating(true)}>
+              <Button onClick={() => setCreating(true)} className="hidden lg:inline-flex">
                 <Plus className="h-4 w-4" />
                 <span>Nuevo presupuesto</span>
               </Button>
@@ -284,7 +285,7 @@ export default function BudgetsPage() {
         description={
           creating
             ? "Define un límite de gasto para una categoría o para todas."
-            : "Puedes ajustar el nombre, el monto y las alertas."
+            : "Puedes ajustar todos los campos del presupuesto."
         }
       >
         {creating && (
@@ -322,6 +323,11 @@ export default function BudgetsPage() {
         confirmLabel="Desactivar"
         isLoading={deactivatingLoading}
       />
+
+      {/* Mobile FAB */}
+      <MobileFab label="Nuevo presupuesto" onClick={() => setCreating(true)}>
+        <Plus className="h-6 w-6" />
+      </MobileFab>
     </DashboardShell>
   );
 }

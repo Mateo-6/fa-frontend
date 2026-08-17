@@ -298,7 +298,7 @@ export default function BudgetDetailPage() {
               <h2 className="text-base font-semibold text-ink">
                 Movimientos que cuentan en este presupuesto
               </h2>
-              <p className="mt-0.5 text-xs text-ink-muted">
+              <p className="mt-0.5 border-b border-glass-border pb-3 text-xs text-ink-muted">
                 Gastos {budget.categoryId ? "en la categoría seleccionada" : "de todas las categorías"}{" "}
                 dentro del período, sin pagos de tarjeta.
               </p>
@@ -371,7 +371,7 @@ export default function BudgetDetailPage() {
         open={editing && Boolean(budget)}
         onClose={() => setEditing(false)}
         title="Editar presupuesto"
-        description="Puedes ajustar el nombre, el monto y las alertas."
+        description="Puedes ajustar todos los campos del presupuesto."
       >
         {budget && (
           <BudgetForm

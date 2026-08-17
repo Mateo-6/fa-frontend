@@ -528,9 +528,12 @@ export interface CreateBudgetPayload {
   alertThresholds?: number[];
 }
 
-/** Only mutable fields — period and categoryId are immutable after creation. */
+/** All budget fields are mutable after creation. */
 export type UpdateBudgetPayload = Partial<
-  Pick<CreateBudgetPayload, "name" | "amount" | "alertThresholds" | "rollover">
+  Pick<
+    CreateBudgetPayload,
+    "name" | "amount" | "currency" | "period" | "categoryId" | "startDate" | "alertThresholds" | "rollover"
+  >
 >;
 
 export async function getBudgets(
@@ -642,4 +645,99 @@ export async function getUnreadNotificationCount(): Promise<{ count: number }> {
 
 export async function markNotificationAsRead(id: string): Promise<Notification> {
   return apiMutate<Notification>(`/notifications/${id}/read`, "PATCH");
+}
+
+/**
+ * Opens a Server-Sent Events stream that delivers new notifications in real time.
+ * Uses fetch (not EventSource) so the Authorization header can be sent, and
+ * reconnects automatically with exponential backoff on failures or on session
+ * refresh. Returns an unsubscribe function that closes the stream.
+ *
+ * @param {function} onNotification Callback invoked for each delivered notification.
+ * @returns {() => void} Cleanup function to close the stream.
+ */
+export function subscribeNotificationsStream(
+  onNotification: (notification: Notification) => void
+): () => void {
+  let aborted = false;
+  let retryDelay = 1000;
+  const controller = new AbortController();
+
+  const handleEvent = (rawEvent: string) => {
+    let data = "";
+    for (const line of rawEvent.split("\n")) {
+      if (line.startsWith("data:")) {
+        data += line.slice(5).trim() + "\n";
+      }
+    }
+    if (!data.trim()) return;
+    try {
+      onNotification(JSON.parse(data) as Notification);
+    } catch {
+      /* ignore malformed payloads */
+    }
+  };
+
+  const scheduleRetry = () => {
+    if (aborted) return;
+    const delay = retryDelay;
+    retryDelay = Math.min(retryDelay * 2, 5000);
+    setTimeout(connect, delay);
+  };
+
+  const connect = async () => {
+    if (aborted) return;
+
+    const token = getToken();
+    if (!token) {
+      scheduleRetry();
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/notifications/stream`, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal: controller.signal,
+      });
+
+      if (!response.ok || !response.body) {
+        if (response.status === 401) {
+          await refreshAccessToken();
+        }
+        scheduleRetry();
+        return;
+      }
+
+      retryDelay = 1000;
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (!aborted) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value) buffer += decoder.decode(value, { stream: true });
+
+        let boundary = buffer.indexOf("\n\n");
+        while (boundary !== -1) {
+          handleEvent(buffer.slice(0, boundary));
+          buffer = buffer.slice(boundary + 2);
+          boundary = buffer.indexOf("\n\n");
+        }
+      }
+    } catch (error) {
+      if ((error as Error).name === "AbortError") return;
+      /* network errors fall through to reconnect */
+    }
+
+    scheduleRetry();
+  };
+
+  connect();
+
+  return () => {
+    aborted = true;
+    controller.abort();
+  };
 }

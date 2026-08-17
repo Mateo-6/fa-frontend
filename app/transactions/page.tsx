@@ -8,6 +8,7 @@ import { SelectField } from "@/components/ui/select-field";
 import { DateRangePicker } from "@/components/ui/date-picker";
 import { FormModal } from "@/components/ui/form-modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { MobileFab } from "@/components/ui/mobile-fab";
 import { TransactionForm } from "@/components/transactions/transaction-form";
 import { TransactionListRow } from "@/components/transactions/transaction-list-row";
 import { useToast } from "@/components/ui/toast";
@@ -273,7 +274,7 @@ export default function TransactionsPage() {
               <h1 className="text-2xl font-semibold tracking-tight text-ink">Transacciones</h1>
               <p className="text-sm text-ink-muted">Registra y gestiona tus movimientos.</p>
             </div>
-            <Button onClick={() => setCreating(true)}>
+            <Button onClick={() => setCreating(true)} className="hidden lg:inline-flex">
               <Plus className="h-4 w-4" />
               <span>Nueva transacción</span>
             </Button>
@@ -440,7 +441,7 @@ export default function TransactionsPage() {
                 <p className="mb-2 px-1 text-xs text-ink-subtle">
                   {transactions.length} de {total} movimientos
                 </p>
-                <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_96px_120px_150px_110px_84px] md:gap-3 md:px-1 md:pb-2 md:text-xs md:font-medium md:tracking-wide md:text-ink-subtle">
+                <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_96px_120px_150px_110px_84px] md:gap-3 md:px-1 md:border-b md:border-glass-border md:pb-2 md:text-xs md:font-medium md:tracking-wide md:text-ink-subtle">
                   <span>Transacción</span>
                   <span>Fecha</span>
                   <span>Categoría</span>
@@ -525,6 +526,11 @@ export default function TransactionsPage() {
         confirmLabel="Eliminar"
         isLoading={deletingLoading}
       />
+
+      {/* Mobile FAB */}
+      <MobileFab label="Nueva transacción" onClick={() => setCreating(true)}>
+        <Plus className="h-6 w-6" />
+      </MobileFab>
     </DashboardShell>
   );
 }
