@@ -93,7 +93,7 @@
 
 @layer utilities {
   .glass-panel {
-    @apply bg-glass border border-glass-border shadow-glass backdrop-blur-xl;
+    @apply bg-glass border border-glass-border backdrop-blur-xl;
   }
 
   .text-balance {
