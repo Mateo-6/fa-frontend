@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { MoneyInput } from "@/components/ui/money-input";
 import { SegmentedControl, SegmentOption } from "@/components/ui/segmented-control";
 import { SelectField } from "@/components/ui/select-field";
+import { MultiSelectField } from "@/components/ui/multi-select-field";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -924,21 +925,16 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
         />
       </div>
 
-      <SelectField
+      <MultiSelectField
+        multiple={false}
         label="Categoría"
-        value={form.categoryId || "default"}
-        onChange={(e) => setField("categoryId", e.target.value)}
+        value={form.categoryId}
+        onChange={(value) => setField("categoryId", value as string)}
         options={categoryOptions}
         placeholder="Selecciona una categoría"
         error={errors.categoryId}
         disabled={saving}
-      >
-        {categoryOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </SelectField>
+      />
 
       {categoryOptions.length === 0 && (
         <p className="-mt-2 text-xs text-ink-muted">
@@ -1016,21 +1012,16 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
       )}
 
       {form.type === "EXPENSE" && (
-        <SelectField
+        <MultiSelectField
+          multiple={false}
           label="Método de pago"
-          value={form.paymentMethodId || "default"}
-          onChange={(e) => setField("paymentMethodId", e.target.value)}
+          value={form.paymentMethodId}
+          onChange={(value) => setField("paymentMethodId", value as string)}
           options={paymentOptions}
           placeholder="Selecciona un método"
           error={errors.paymentMethodId}
           disabled={saving}
-        >
-          {paymentOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </SelectField>
+        />
       )}
 
       {form.type === "EXPENSE" && (
@@ -1044,54 +1035,39 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
       )}
 
       {form.type === "INCOME" && (
-        <SelectField
+        <MultiSelectField
+          multiple={false}
           label="Método de pago (opcional)"
-          value={form.paymentMethodId || "default"}
-          onChange={(e) => setField("paymentMethodId", e.target.value)}
+          value={form.paymentMethodId}
+          onChange={(value) => setField("paymentMethodId", value as string)}
           options={paymentOptions}
           placeholder="Sin método específico"
           disabled={saving}
-        >
-          {paymentOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </SelectField>
+        />
       )}
 
       {form.type === "TRANSFER" && (
         <div className="grid grid-cols-2 gap-4">
-          <SelectField
+          <MultiSelectField
+            multiple={false}
             label="Desde"
-            value={form.sourcePaymentMethodId || "default"}
-            onChange={(e) => setField("sourcePaymentMethodId", e.target.value)}
+            value={form.sourcePaymentMethodId}
+            onChange={(value) => setField("sourcePaymentMethodId", value as string)}
             options={sourceOptions}
             placeholder="Origen"
             error={errors.sourcePaymentMethodId}
             disabled={saving}
-          >
-            {sourceOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </SelectField>
-          <SelectField
+          />
+          <MultiSelectField
+            multiple={false}
             label="Hacia"
-            value={form.destinationPaymentMethodId || "default"}
-            onChange={(e) => setField("destinationPaymentMethodId", e.target.value)}
+            value={form.destinationPaymentMethodId}
+            onChange={(value) => setField("destinationPaymentMethodId", value as string)}
             options={destinationOptions}
             placeholder="Destino"
             error={errors.destinationPaymentMethodId}
             disabled={saving}
-          >
-            {destinationOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </SelectField>
+          />
         </div>
       )}
 

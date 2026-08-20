@@ -4,7 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { Button } from "@/components/ui/button";
-import { SelectField } from "@/components/ui/select-field";
+import { MultiSelectField } from "@/components/ui/multi-select-field";
 import { DateRangePicker } from "@/components/ui/date-picker";
 import { FormModal } from "@/components/ui/form-modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -55,26 +55,26 @@ function monthStartISO(): string {
 interface FiltersState {
   startDate: string;
   endDate: string;
-  type: TransactionType | "";
-  categoryId: string;
-  paymentMethodId: string;
+  type: TransactionType[];
+  categoryId: string[];
+  paymentMethodId: string[];
 }
 
 const DEFAULT_FILTERS: FiltersState = {
   startDate: monthStartISO(),
   endDate: todayISO(),
-  type: "",
-  categoryId: "",
-  paymentMethodId: "",
+  type: [],
+  categoryId: [],
+  paymentMethodId: [],
 };
 
 function buildParams(filters: FiltersState, offset: number): TransactionHistoryParams {
   const params: TransactionHistoryParams = { limit: PAGE_SIZE, offset };
   if (filters.startDate) params.startDate = filters.startDate;
   if (filters.endDate) params.endDate = filters.endDate;
-  if (filters.type) params.type = filters.type;
-  if (filters.categoryId) params.categoryId = filters.categoryId;
-  if (filters.paymentMethodId) params.paymentMethodId = filters.paymentMethodId;
+  if (filters.type.length > 0) params.type = filters.type;
+  if (filters.categoryId.length > 0) params.categoryId = filters.categoryId;
+  if (filters.paymentMethodId.length > 0) params.paymentMethodId = filters.paymentMethodId;
   return params;
 }
 
@@ -186,10 +186,6 @@ export default function TransactionsPage() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const resolveSelectValue = (value: string): string => {
-    return value === "default" ? "" : value;
-  };
-
   const clearFilters = () => {
     setFilters(DEFAULT_FILTERS);
   };
@@ -198,9 +194,9 @@ export default function TransactionsPage() {
     () =>
       filters.startDate !== DEFAULT_FILTERS.startDate ||
       filters.endDate !== DEFAULT_FILTERS.endDate ||
-      Boolean(filters.type) ||
-      Boolean(filters.categoryId) ||
-      Boolean(filters.paymentMethodId),
+      filters.type.length > 0 ||
+      filters.categoryId.length > 0 ||
+      filters.paymentMethodId.length > 0,
     [filters]
   );
 
@@ -281,7 +277,7 @@ export default function TransactionsPage() {
           </div>
 
           {/* Filters */}
-          <section className="glass-panel rounded-2xl p-4 sm:p-5">
+          <section className="glass-panel relative z-20 rounded-2xl p-4 sm:p-5">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-xs font-medium uppercase tracking-wider text-ink-muted">
                 Filtros
@@ -297,38 +293,37 @@ export default function TransactionsPage() {
               )}
             </div>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-              <DateRangePicker
-                label="Período"
-                start={filters.startDate}
-                end={filters.endDate}
-                onChange={(range) => {
-                  handleFilterChange("startDate", range.start);
-                  handleFilterChange("endDate", range.end);
-                }}
-              />
-              <SelectField
+              <div className="col-span-2 md:col-span-1">
+                <DateRangePicker
+                  label="Período"
+                  start={filters.startDate}
+                  end={filters.endDate}
+                  onChange={(range) => {
+                    handleFilterChange("startDate", range.start);
+                    handleFilterChange("endDate", range.end);
+                  }}
+                />
+              </div>
+              <MultiSelectField
                 label="Tipo"
-                value={filters.type || "default"}
-                onChange={(e) =>
-                  handleFilterChange(
-                    "type",
-                    resolveSelectValue(e.target.value) as FiltersState["type"]
-                  )
+                value={filters.type}
+                onChange={(values) =>
+                  handleFilterChange("type", (values as string[]) as TransactionType[])
                 }
                 options={TYPE_FILTER_OPTIONS}
                 placeholder="Todos los tipos"
               />
-              <SelectField
+              <MultiSelectField
                 label="Categoría"
-                value={filters.categoryId || "default"}
-                onChange={(e) => handleFilterChange("categoryId", resolveSelectValue(e.target.value))}
+                value={filters.categoryId}
+                onChange={(values) => handleFilterChange("categoryId", values as string[])}
                 options={categoryOptions}
                 placeholder="Todas"
               />
-              <SelectField
+              <MultiSelectField
                 label="Método de pago"
-                value={filters.paymentMethodId || "default"}
-                onChange={(e) => handleFilterChange("paymentMethodId", resolveSelectValue(e.target.value))}
+                value={filters.paymentMethodId}
+                onChange={(values) => handleFilterChange("paymentMethodId", values as string[])}
                 options={methodOptions}
                 placeholder="Todos"
               />

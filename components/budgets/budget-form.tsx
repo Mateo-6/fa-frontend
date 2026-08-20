@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MoneyInput } from "@/components/ui/money-input";
 import { SelectField } from "@/components/ui/select-field";
+import { MultiSelectField } from "@/components/ui/multi-select-field";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -121,10 +122,10 @@ export function BudgetForm({ budget, categories = [], onSuccess, onCancel, submi
 
   const expenseCategories = categories.filter((category) => category.type === "expense");
 
-  const categoryOptions = [
-    { value: "", label: "General (todas las categorías)" },
-    ...expenseCategories.map((category) => ({ value: category.id, label: category.name })),
-  ];
+  const categoryOptions = expenseCategories.map((category) => ({
+    value: category.id,
+    label: category.name,
+  }));
 
   const toggleThreshold = (value: number) => {
     setField(
@@ -268,20 +269,15 @@ export function BudgetForm({ budget, categories = [], onSuccess, onCancel, submi
             </option>
           ))}
         </SelectField>
-        <SelectField
+        <MultiSelectField
+          multiple={false}
           label="Categoría"
-          value={form.categoryId || "default"}
-          onChange={(e) => setField("categoryId", e.target.value)}
+          value={form.categoryId}
+          onChange={(value) => setField("categoryId", value as string)}
           options={categoryOptions}
-          placeholder="Selecciona una categoría"
+          placeholder="General (todas las categorías)"
           disabled={saving}
-        >
-          {categoryOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </SelectField>
+        />
       </div>
 
       <DatePicker

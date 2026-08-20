@@ -229,9 +229,9 @@ export type UpdatePaymentMethodPayload = Partial<CreatePaymentMethodPayload>;
 export interface TransactionHistoryParams {
   startDate?: string;
   endDate?: string;
-  type?: TransactionType;
-  categoryId?: string;
-  paymentMethodId?: string;
+  type?: TransactionType | TransactionType[];
+  categoryId?: string | string[];
+  paymentMethodId?: string | string[];
   excludeCardPayments?: boolean;
   limit?: number;
   offset?: number;
@@ -398,15 +398,27 @@ export async function getSummary(): Promise<SummaryData> {
   return apiGet<SummaryData>("/summary");
 }
 
+function appendSearchParam(
+  search: URLSearchParams,
+  key: string,
+  value: string | string[] | undefined
+): void {
+  if (value === undefined || value === null || value === "") return;
+  const values = Array.isArray(value) ? value : [value];
+  for (const v of values) {
+    if (v) search.append(key, v);
+  }
+}
+
 export async function getTransactionHistory(
   params: TransactionHistoryParams = {}
 ): Promise<TransactionHistoryResult> {
   const search = new URLSearchParams();
   if (params.startDate) search.set("startDate", params.startDate);
   if (params.endDate) search.set("endDate", params.endDate);
-  if (params.type) search.set("type", params.type);
-  if (params.categoryId) search.set("categoryId", params.categoryId);
-  if (params.paymentMethodId) search.set("paymentMethodId", params.paymentMethodId);
+  appendSearchParam(search, "type", params.type);
+  appendSearchParam(search, "categoryId", params.categoryId);
+  appendSearchParam(search, "paymentMethodId", params.paymentMethodId);
   if (params.excludeCardPayments) search.set("excludeCardPayments", "true");
   if (params.limit !== undefined) search.set("limit", String(params.limit));
   if (params.offset !== undefined) search.set("offset", String(params.offset));
