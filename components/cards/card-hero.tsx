@@ -21,28 +21,28 @@ export function CardHero({ card }: CardHeroProps) {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
-        <div>
-          <p className="text-xs font-medium tracking-wide text-ink-muted">Saldo actual</p>
-          <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight text-ink">
+      <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4 sm:gap-x-6">
+        <div className="min-w-0">
+          <p className="text-xs font-medium leading-snug tracking-wide text-ink-muted">Saldo actual</p>
+          <p className="mt-1 text-base font-semibold leading-snug tabular-nums tracking-tight text-ink sm:text-xl">
             {formatCurrency(card.currentBalance, card.currency)}
           </p>
         </div>
-        <div>
-          <p className="text-xs font-medium tracking-wide text-ink-muted">Límite de crédito</p>
-          <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight text-ink">
+        <div className="min-w-0">
+          <p className="text-xs font-medium leading-snug tracking-wide text-ink-muted">Límite de crédito</p>
+          <p className="mt-1 text-base font-semibold leading-snug tabular-nums tracking-tight text-ink sm:text-xl">
             {formatCurrency(card.creditLimit, card.currency)}
           </p>
         </div>
-        <div>
-          <p className="text-xs font-medium tracking-wide text-ink-muted">Disponible</p>
-          <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight text-ink">
+        <div className="min-w-0">
+          <p className="text-xs font-medium leading-snug tracking-wide text-ink-muted">Disponible</p>
+          <p className="mt-1 text-base font-semibold leading-snug tabular-nums tracking-tight text-ink sm:text-xl">
             {formatCurrency(card.availableCredit, card.currency)}
           </p>
         </div>
-        <div>
-          <p className="text-xs font-medium tracking-wide text-ink-muted">Uso de crédito</p>
-          <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight text-ink">
+        <div className="min-w-0">
+          <p className="text-xs font-medium leading-snug tracking-wide text-ink-muted">Uso de crédito</p>
+          <p className="mt-1 text-base font-semibold leading-snug tabular-nums tracking-tight text-ink sm:text-xl">
             {utilization.toFixed(1)}%
           </p>
         </div>

@@ -11,6 +11,8 @@ import {
   Tag,
   Repeat,
   CalendarRange,
+  CalendarDays,
+  Coins,
   AlertTriangle,
 } from "lucide-react";
 
@@ -205,6 +207,7 @@ export function BudgetDetailCard({
         <MetadataItem
           label="Período"
           value={PERIOD_LABELS[budget.period]}
+          icon={<CalendarDays className="h-4 w-4" />}
         />
         <MetadataItem
           label="Rango de fechas"
@@ -214,6 +217,7 @@ export function BudgetDetailCard({
         <MetadataItem
           label="Moneda"
           value={budget.currency}
+          icon={<Coins className="h-4 w-4" />}
         />
         <MetadataItem
           label="Acumula saldo"

@@ -63,7 +63,7 @@ export function PaymentMethodRow({
 
   return (
     <div className="group border-b border-glass-border py-4 first:pt-0 last:border-0 last:pb-0">
-      <div className="flex items-center gap-3">
+      <div className="flex items-start gap-3 md:items-center">
         <div
           className={cn(
             "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
@@ -80,37 +80,41 @@ export function PaymentMethodRow({
               <p className="truncate text-xs text-ink-muted">{meta}</p>
             </div>
             {isCard ? (
-              <p className="shrink-0 text-right text-sm font-semibold text-ink">
+              <p className="hidden shrink-0 text-right text-sm font-semibold text-ink md:block">
                 {formatCurrency(balance, method.currency)}
                 <span className="block text-xs font-normal text-ink-muted">
                   de {formatCurrency(limit, method.currency)}
                 </span>
               </p>
             ) : (
-              <p className="shrink-0 text-sm font-semibold text-ink">{amountLabel}</p>
+              <p className="hidden shrink-0 text-sm font-semibold text-ink md:block">
+                {amountLabel}
+              </p>
             )}
           </div>
 
           {isCard && (
-            <div className="mt-3">
-              <div
-                className="h-1.5 w-full overflow-hidden rounded-full bg-ground"
-                role="progressbar"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={Math.round(utilization)}
-                aria-label={`Uso de crédito de ${method.name}: ${utilization.toFixed(0)} por ciento`}
-              >
+            <div className="hidden md:block">
+              <div className="mt-3">
                 <div
-                  className="h-full rounded-full bg-credit"
-                  style={{ width: `${utilization}%` }}
-                />
-              </div>
-              <div className="mt-1.5 flex justify-between text-xs text-ink-muted">
-                <span>{utilization.toFixed(0)}% usado</span>
-                <span>
-                  Corte día {details.cut_off_day ?? "—"} · Pago día {details.payment_day ?? "—"}
-                </span>
+                  className="h-1.5 w-full overflow-hidden rounded-full bg-ground"
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.round(utilization)}
+                  aria-label={`Uso de crédito de ${method.name}: ${utilization.toFixed(0)} por ciento`}
+                >
+                  <div
+                    className="h-full rounded-full bg-credit"
+                    style={{ width: `${utilization}%` }}
+                  />
+                </div>
+                <div className="mt-1.5 flex justify-between text-xs text-ink-muted">
+                  <span>{utilization.toFixed(0)}% usado</span>
+                  <span>
+                    Corte día {details.cut_off_day ?? "—"} · Pago día {details.payment_day ?? "—"}
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -168,6 +172,46 @@ export function PaymentMethodRow({
           </button>
         </div>
       </div>
+
+      {isCard ? (
+        <div className="mt-3 border-t border-glass-border pt-3 md:hidden">
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="text-base font-semibold tabular-nums tracking-tight text-ink">
+              {formatCurrency(balance, method.currency)}
+            </p>
+            <p className="text-xs text-ink-muted">
+              de {formatCurrency(limit, method.currency)}
+            </p>
+          </div>
+          <div className="mt-3">
+            <div
+              className="h-1.5 w-full overflow-hidden rounded-full bg-ground"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(utilization)}
+              aria-label={`Uso de crédito de ${method.name}: ${utilization.toFixed(0)} por ciento`}
+            >
+              <div
+                className="h-full rounded-full bg-credit"
+                style={{ width: `${utilization}%` }}
+              />
+            </div>
+            <div className="mt-1.5 flex justify-between gap-3 text-xs text-ink-muted">
+              <span className="shrink-0">{utilization.toFixed(0)}% usado</span>
+              <span className="text-right">
+                Corte día {details.cut_off_day ?? "—"} · Pago día {details.payment_day ?? "—"}
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-3 pt-3 md:hidden">
+          <p className="text-base font-semibold tabular-nums tracking-tight text-ink">
+            {amountLabel}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
