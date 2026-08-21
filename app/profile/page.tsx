@@ -192,7 +192,7 @@ export default function ProfilePage() {
       await logout();
       router.push("/");
     } catch {
-      // logout() siempre limpia la sesión local; redirigimos igualmente.
+      // logout() always clears the local session; we redirect regardless.
       router.push("/");
     }
   };
@@ -285,14 +285,14 @@ export default function ProfilePage() {
             </div>
           </section>
 
-          {/* Datos de contacto */}
+          {/* Contact info */}
           <section className="glass-panel rounded-2xl p-6">
             <h2 className="mb-2 text-base font-semibold tracking-tight text-ink">Datos de contacto</h2>
             <p className="mb-2 text-sm text-ink-muted">Cómo contactarte y tu nombre.</p>
             {renderRows(contactRows)}
           </section>
 
-          {/* Cuenta */}
+          {/* Account */}
           <section className="glass-panel rounded-2xl p-6">
             <h2 className="mb-2 text-base font-semibold tracking-tight text-ink">Cuenta</h2>
             <p className="mb-2 text-sm text-ink-muted">Tu identificación dentro de Financial App.</p>

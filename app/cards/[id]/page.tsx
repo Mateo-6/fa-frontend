@@ -180,7 +180,7 @@ export default function CardDetailPage() {
 
           {/* Content grid */}
           <section className="grid gap-6 lg:grid-cols-3">
-            {/* Periodo actual */}
+            {/* Current period */}
             <div className="glass-panel rounded-2xl p-5 lg:col-span-2">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-glass-border pb-3">
                 <div className="flex items-center gap-2">
@@ -234,7 +234,7 @@ export default function CardDetailPage() {
               )}
             </div>
 
-            {/* Pagos recientes */}
+            {/* Recent payments */}
             <div className="glass-panel self-start rounded-2xl p-5">
               <div className="mb-2 flex items-center gap-2 border-b border-glass-border pb-3">
                 <ArrowDownUp className="h-4 w-4 text-accent" />
@@ -261,7 +261,7 @@ export default function CardDetailPage() {
             </div>
           </section>
 
-          {/* Estados de cuenta */}
+          {/* Statements */}
           <section className="glass-panel rounded-2xl p-5">
             <div className="mb-3 flex items-center justify-between gap-3 border-b border-glass-border pb-3">
               <div className="flex items-center gap-2">
@@ -296,7 +296,7 @@ export default function CardDetailPage() {
         </div>
       </main>
 
-      {/* Realizar pago */}
+      {/* Make payment */}
       <FormModal
         open={payOpen}
         onClose={() => setPayOpen(false)}

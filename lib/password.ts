@@ -1,7 +1,7 @@
 /**
- * Reglas de contraseña espejadas desde el DTO de creación de usuario del API
- * (api/src/application/dto/user/create-user.dto.ts) para que la validación
- * del frontend coincida con la del backend.
+ * Password rules mirrored from the API's user creation DTO
+ * (api/src/application/dto/user/create-user.dto.ts) so that frontend
+ * validation matches the backend.
  */
 export const SPECIAL_CHAR_REGEX = /[!@#$%^&*(),.?":{}|<>=+\-_~`[\]\\;'/]/;
 

@@ -191,7 +191,7 @@ try {
   await capture(context, "/transactions", "list-desktop.png", desktop);
   await capture(context, "/transactions", "list-mobile.png", mobile);
 
-  // Create dialog (reemplaza la antigua pantalla /transactions/new)
+  // Create dialog (replaces the old /transactions/new screen)
   {
     const page = await capture(context, "/transactions", "new-desktop.png", { width: 1440, height: 1200 });
     await page.getByRole("button", { name: "Nueva transacción" }).click();

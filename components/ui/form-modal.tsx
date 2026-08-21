@@ -4,9 +4,9 @@ import * as React from "react";
 import { Dialog } from "@/components/ui/dialog";
 
 /**
- * Modal reutilizable que envuelve un formulario.
- * Recibe el form como children junto con el estado de apertura y el título;
- * se usa igual para crear y para editar en todas las pantallas.
+ * Reusable modal that wraps a form.
+ * Receives the form as children along with the open state and the title;
+ * used the same way for creating and editing across all screens.
  */
 interface FormModalProps {
   open: boolean;

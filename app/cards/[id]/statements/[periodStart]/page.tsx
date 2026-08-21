@@ -128,7 +128,7 @@ export default function CardStatementDetailPage() {
             <StatusBadge status={detail.status} className="ml-auto" />
           </div>
 
-          {/* Resumen */}
+          {/* Summary */}
           <section className="glass-panel grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-3">
             <div>
               <p className="text-xs text-ink-muted">Consumido</p>
@@ -155,7 +155,7 @@ export default function CardStatementDetailPage() {
             </div>
           </section>
 
-          {/* Desglose por categoría */}
+          {/* Breakdown by category */}
           <section className="glass-panel rounded-2xl p-5">
             <div className="mb-3 flex items-center gap-2 border-b border-glass-border pb-3">
               <PieChart className="h-4 w-4 text-accent" />
@@ -195,7 +195,7 @@ export default function CardStatementDetailPage() {
             )}
           </section>
 
-          {/* Transacciones */}
+          {/* Transactions */}
           <section className="glass-panel rounded-2xl p-5">
             <div className="mb-3 flex items-center gap-2 border-b border-glass-border pb-3">
               <Receipt className="h-4 w-4 text-accent" />

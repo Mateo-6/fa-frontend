@@ -35,8 +35,8 @@ import {
 } from "lucide-react";
 
 /**
- * Paleta curada de colores para categorías. Se almacena como `color` (#hex)
- * vía la API y se usa como dato (contenido), no como token de diseño.
+ * Curated color palette for categories. Stored as `color` (#hex) via the API
+ * and used as data (content), not as a design token.
  */
 export const CATEGORY_COLORS: string[] = [
   "#38bdf8",
