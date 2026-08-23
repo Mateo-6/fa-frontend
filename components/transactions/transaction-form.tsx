@@ -257,6 +257,16 @@ function budgetDateInRange(budget: Budget, localISO: string): boolean {
   return date <= addDaysISO(end, 1);
 }
 
+function budgetMatchesTransaction(budget: Budget, transaction: Transaction): boolean {
+  if (budget.categoryId !== null && budget.categoryId !== transaction.category.id) return false;
+  return budgetDateInRange(budget, toLocalISODate(transaction.date));
+}
+
+function currentBudgetContribution(transaction: Transaction): number {
+  const amount = transaction.budgetAmount;
+  return amount === null || amount === undefined ? transaction.amount : amount;
+}
+
 function initState(transaction?: Transaction | null): FormState {
   if (!transaction) {
     return {
@@ -609,13 +619,18 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
     if (selectedBudget && form.budgetId !== "") {
       const imputed = form.budgetAmount !== "" ? parseAmount(form.budgetAmount) : totalAmount;
       if (imputed !== null && imputed > 0) {
-        const used = selectedBudget.spent + imputed;
-        const remaining = Math.max(0, selectedBudget.amount - selectedBudget.spent);
+        const wasCounted =
+          isEdit && transaction && budgetMatchesTransaction(selectedBudget, transaction)
+            ? currentBudgetContribution(transaction)
+            : 0;
+        const baseSpent = Math.max(0, selectedBudget.spent - wasCounted);
+        const used = baseSpent + imputed;
+        const remaining = Math.max(0, selectedBudget.amount - baseSpent);
         checks.push({
           key: "budget",
           kind: "budget",
           title: `Presupuesto de ${selectedBudget.name}`,
-          detail: `Usado: ${formatCurrency(selectedBudget.spent, selectedBudget.currency)} · Restante: ${formatCurrency(remaining, selectedBudget.currency)}`,
+          detail: `Usado: ${formatCurrency(baseSpent, selectedBudget.currency)} · Restante: ${formatCurrency(remaining, selectedBudget.currency)}`,
           used,
           limit: selectedBudget.amount,
           currency: selectedBudget.currency,
@@ -641,9 +656,12 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
 
   const budgetCheckAdditional =
     selectedBudget && form.budgetId !== ""
-      ? form.budgetAmount !== ""
-        ? (parseAmount(form.budgetAmount) ?? 0)
-        : (totalAmount ?? 0)
+      ? (form.budgetAmount !== ""
+          ? (parseAmount(form.budgetAmount) ?? 0)
+          : (totalAmount ?? 0)) -
+        (isEdit && transaction && budgetMatchesTransaction(selectedBudget, transaction)
+          ? currentBudgetContribution(transaction)
+          : 0)
       : 0;
 
   const validate = (): boolean => {
