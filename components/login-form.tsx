@@ -103,15 +103,20 @@ export function LoginForm() {
       <div
         className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
       >
-        <label className="flex items-center gap-2 text-sm text-ink-muted cursor-pointer hover:text-ink transition-colors">
+        <label className="flex items-start gap-2 text-sm text-ink-muted cursor-pointer hover:text-ink transition-colors">
           <input
             type="checkbox"
             checked={formData.rememberMe}
             onChange={handleChange("rememberMe")}
             disabled={isLoading}
-            className="h-4 w-4 rounded border-glass-border bg-ground/60 text-accent focus:ring-accent/60"
+            className="mt-0.5 h-4 w-4 rounded border-glass-border bg-ground/60 text-accent focus:ring-accent/60"
           />
-          Recordarme
+          <span>
+            Mantener la sesión iniciada
+            <span className="block text-xs text-ink-subtle">
+              Si no la marcas, cerrarás tu sesión al cerrar el navegador.
+            </span>
+          </span>
         </label>
         <a
           href="#"

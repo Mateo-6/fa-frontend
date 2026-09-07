@@ -711,7 +711,7 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
       }
     }
 
-    const overChecks = spendingChecks.filter((check) => check.over);
+    const overChecks = spendingChecks.filter((check) => check.over && check.kind !== "budget");
 
     setErrors(next);
     return Object.keys(next).length === 0 && overChecks.length === 0;
@@ -1098,7 +1098,7 @@ export function TransactionForm({ transaction, onSuccess, onCancel, submitLabel 
         <Button
           type="submit"
           isLoading={saving}
-          disabled={saving || spendingChecks.some((check) => check.over)}
+          disabled={saving || spendingChecks.some((check) => check.over && check.kind !== "budget")}
         >
           {isEdit ? <Save className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {submitLabel ?? (isEdit ? "Guardar cambios" : "Crear transacción")}

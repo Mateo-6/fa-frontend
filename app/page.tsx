@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/login-form";
+import { SessionRedirect } from "@/components/session-redirect";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Wallet } from "lucide-react";
 import Link from "next/link";
@@ -9,6 +10,8 @@ export default function LoginPage() {
       {/* Atmospheric ground */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(56,189,248,0.08),_transparent_50%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(99,102,241,0.06),_transparent_45%)]" />
+
+      <SessionRedirect />
 
       <div className="absolute right-4 top-4">
         <ThemeToggle className="flex h-10 w-10 items-center justify-center rounded-lg text-ink-muted hover:bg-glass-hover hover:text-ink" />
