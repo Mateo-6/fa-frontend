@@ -12,10 +12,12 @@ import {
   X,
   PanelLeftClose,
   PanelLeftOpen,
+  Sparkles,
 } from "lucide-react";
 
 const navItems = [
   { label: "Resumen", href: "/summary", icon: LayoutDashboard },
+  { label: "Asistente AMI", href: "/assistant", icon: Sparkles },
   { label: "Transacciones", href: "/transactions", icon: Receipt },
   { label: "Métodos de pago", href: "/payment-methods", icon: Wallet, match: ["/cards"] },
   { label: "Presupuestos", href: "/budgets", icon: PiggyBank },

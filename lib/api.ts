@@ -496,6 +496,96 @@ export async function parseTransactionIntent(text: string): Promise<ParseIntentR
   return apiRequest<ParseIntentResponse>("/transactions/parse-intent", { text });
 }
 
+// ---------------------------------------------------------------------------
+// AMI Agent — Natural language chat with action execution
+// ---------------------------------------------------------------------------
+
+/** A write action executed by the agent during a chat turn. */
+export interface AgentExecutedAction {
+  tool: string;
+  success: boolean;
+  summary: string;
+}
+
+/** A write action proposed by the agent, waiting for explicit user confirmation. */
+export interface PendingAgentAction {
+  tool: string;
+  summary: string;
+}
+
+/** A persisted message inside an agent conversation snapshot. */
+export interface AgentConversationMessage {
+  role: "user" | "assistant";
+  content: string;
+  actions?: AgentExecutedAction[];
+  createdAt: string;
+}
+
+/** Lightweight conversation summary for list views. */
+export interface AgentConversationSummary {
+  id: string;
+  title: string;
+  lastMessage: string | null;
+  updatedAt: string;
+}
+
+/** Full conversation snapshot with its message history. */
+export interface AgentConversation {
+  id: string;
+  title: string;
+  messages: AgentConversationMessage[];
+  pendingAction?: PendingAgentAction | null;
+  updatedAt: string;
+}
+
+/** Response from POST /agent/chat and POST /agent/conversations/:id/confirm. */
+export interface AgentChatResponse {
+  conversationId: string;
+  reply: string;
+  actions: AgentExecutedAction[];
+  pendingAction?: PendingAgentAction | null;
+}
+
+/**
+ * Sends a natural-language message to the AMI agent. The agent can execute
+ * real actions (create transactions, query history) and replies in Spanish.
+ * Write actions are NOT executed immediately — they come back as
+ * `pendingAction` until the user confirms them.
+ * When `conversationId` is omitted, a new conversation snapshot is created.
+ */
+export async function sendAgentMessage(
+  message: string,
+  conversationId?: string
+): Promise<AgentChatResponse> {
+  return apiRequest<AgentChatResponse>("/agent/chat", { message, conversationId });
+}
+
+/**
+ * Resolves a pending agent action: on approval the action executes now,
+ * on rejection it is discarded.
+ */
+export async function confirmAgentAction(
+  conversationId: string,
+  approved: boolean
+): Promise<AgentChatResponse> {
+  return apiRequest<AgentChatResponse>(`/agent/conversations/${conversationId}/confirm`, { approved });
+}
+
+/** Lists the user's agent conversation summaries, most recent first. */
+export async function getAgentConversations(): Promise<AgentConversationSummary[]> {
+  return apiGet<AgentConversationSummary[]>("/agent/conversations");
+}
+
+/** Retrieves a full agent conversation snapshot with its messages. */
+export async function getAgentConversation(id: string): Promise<AgentConversation> {
+  return apiGet<AgentConversation>(`/agent/conversations/${id}`);
+}
+
+/** Deletes an agent conversation snapshot. */
+export async function deleteAgentConversation(id: string): Promise<void> {
+  return apiMutate<void>(`/agent/conversations/${id}`, "DELETE");
+}
+
 export async function deleteTransaction(id: string): Promise<void> {
   return apiMutate<void>(`/transactions/${id}`, "DELETE");
 }
